@@ -8,6 +8,12 @@ async function fetchJSON(path)
 	return json;
 }
 
+function renderErrorPage()
+{
+	const error_message = el("h1", {}, "404 Not Found");
+	return error_message;
+}
+
 function renderContent(json)
 {
 	const div = el("div", {});
@@ -20,7 +26,7 @@ function renderContent(json)
 		url.search = search_params;
 
 		const section = el("section", {});
-		const title = el("h1", {}, item.title);
+		const title = el("h2", {}, item.title);
 		const link = el("a", {href: url.href}, item.text);
 
 		section.appendChild(title);
@@ -50,6 +56,77 @@ function renderNav(json)
 	}
 	nav.appendChild(list);
 	return nav;
+}
+
+function renderLectures(json)
+{
+	const lectures = el("div", {});
+
+	for(const item of json.lectures)
+	{
+		const url = new URL(window.location);
+		const search_params = new URLSearchParams(url.search);
+		search_params.append("lecture", item.slug);
+		url.search = search_params.toString();
+
+		const section = el("section", {});
+		const title = el("h2", {}, item.title);
+		const link = el("a", {href: url.href});
+		link.appendChild(title);
+		section.appendChild(link);
+		lectures.appendChild(section);
+	}
+
+	return lectures;
+}
+
+function renderKeywords(json)
+{
+	const div = el("div", {});
+
+	for(const item of json.keywords)
+	{
+		const section = el("section", {});
+		const title = el("h2", {}, item.title);
+		const content = el("p", {}, item.content);
+
+		section.appendChild(title);
+		section.appendChild(content);
+		div.appendChild(section);
+	}
+
+	return div;
+}
+
+function renderContentPage(json, content_param)
+{
+
+	const parent_el = el("div", {});
+	const header = el("header", {});
+	const main = el("main", {});
+	const title = el("h1", {}, json.title);
+
+	header.appendChild(title);
+	parent_el.appendChild(header);
+
+	if(content_param === "keywords")
+	{
+		const keywords = renderKeywords(json);
+		main.appendChild(keywords);
+	}
+	else if(content_param === "lectures")
+	{
+		const lectures = renderLectures(json);
+		main.appendChild(lectures);
+	}
+	else if(content_param === "questions")
+	{
+		const questions = renderQuestions(json);
+		main.appendChild(questions);
+	}
+
+	parent_el.appendChild(main);
+	return parent_el;
 }
 
 function renderTypePage(json)
@@ -111,9 +188,17 @@ async function render()
 		else
 			path = `../data/${searchParams.get("type")}/index.json`;
 
-		const typeJson = await fetchJSON(path);
-		const typePage = renderTypePage(typeJson);
-		body.appendChild(typePage);
+		try
+		{
+			const typeJson = await fetchJSON(path);
+			const typePage = renderTypePage(typeJson);
+			body.appendChild(typePage);
+		}
+		catch(e)
+		{
+			const error_message = renderErrorPage();
+			body.append(error_message);
+		}
 	}
 	else if(searchParams.size === 2)
 	{
@@ -121,9 +206,22 @@ async function render()
 			path = `../data/js/${searchParams.get("content")}.json`;
 		else
 			path = `../data/${searchParams.get("type")}/${searchParams.get("content")}.json`;
-
-		const contentJson = await fetchJSON(path);
-		console.log(contentJson);
+		
+		try
+		{
+			const contentJson = await fetchJSON(path);
+			if(searchParams.get("content") in contentJson)
+			{
+				console.log(contentJson[searchParams.get("content")]);
+				const contentPage = renderContentPage(contentJson, searchParams.get("content"));
+				body.appendChild(contentPage);
+			}
+		}
+		catch(e)
+		{
+			const error_message = renderErrorPage();
+			body.appendChild(error_message);
+		}	
 	}
 }
 
