@@ -59,6 +59,56 @@ export function renderLecture(json)
 	return lecture;
 }
 
+function submitHandler(e)
+{
+	e.preventDefault();
+	for(const checkbox of document.querySelectorAll("input[type='checkbox']"))
+	{
+		const checkbox_fieldset = checkbox.parentElement.parentElement
+		if(checkbox.checked && checkbox.value === "true")
+		{
+			checkbox_fieldset.querySelector(".correct").classList.remove("hidden");
+			checkbox_fieldset.querySelector(".incorrect").classList.add("hidden");
+		}
+		else if(checkbox.checked && checkbox.value === "false")
+		{
+			checkbox_fieldset.querySelector(".correct").classList.add("hidden");
+			checkbox_fieldset.querySelector(".incorrect").classList.remove("hidden");
+		}
+	}
+}
+
+export function renderQuestions(json)
+{
+	const form = el("form", {action: `${window.location}`,method: "POST"});
+
+	for(const question of json.questions)
+	{
+		const set = el("fieldset", {});
+		const question_el = el("legend", {}, question.question);
+		const incorrect_text = el("p", {class: "incorrect hidden"}, "incorrect");
+		const correct_text = el("p", {class: "correct hidden"}, "correct");
+		set.appendChild(question_el);
+		for(const answer of question.answers)
+		{
+			const inline_el = el("div", {});
+			const label = el("label", {}, answer.answer);
+			const input = el("input", {type: "checkbox", value: answer.correct});
+			inline_el.appendChild(label);
+			inline_el.appendChild(input);
+			set.appendChild(inline_el);
+		}
+		set.appendChild(correct_text);
+		set.appendChild(incorrect_text);
+		form.appendChild(set);
+	}
+	
+	const submit_button = el("input", {type:"submit"});
+	form.appendChild(submit_button);
+	form.addEventListener("submit", submitHandler);
+	return form;
+}
+
 export function renderLectures(json)
 {
 	const lectures = el("div", {});
@@ -83,18 +133,27 @@ export function renderLectures(json)
 
 export function renderKeywords(json)
 {
-	const div = el("div", {});
+	const div = el("div", {id: "flashcards"});
 
+	let current = null;
 	for(const item of json.keywords)
 	{
 		const section = el("section", {});
-		const title = el("h2", {}, item.title);
-		const content = el("p", {}, item.content);
+
+		if(current === null)
+		{
+			section.setAttribute("class", "current");
+			current = section;
+		}
+		else
+			section.setAttribute("class", "hidden");
+
+		const title = el("h2", {class: "title"}, item.title);
+		const content = el("p", {class: "content hidden"}, item.content);
 
 		section.appendChild(title);
 		section.appendChild(content);
 		div.appendChild(section);
 	}
-
 	return div;
 }

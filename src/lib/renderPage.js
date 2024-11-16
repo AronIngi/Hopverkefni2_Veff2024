@@ -1,5 +1,5 @@
 import { el } from "./elements.js";
-import {renderLectures, renderKeywords } from "./renderSubpage.js";
+import {renderLectures, renderKeywords, renderQuestions } from "./renderSubpage.js";
 
 function renderContent(json)
 {
@@ -45,6 +45,40 @@ function renderNav(json)
 	return nav;
 }
 
+function flashcardNextHandler(e)
+{
+	const current = document.querySelector(".current");
+	let next;
+	if(current.nextSibling != null)
+		next = current.nextSibling;
+	else
+		next = document.querySelector("#flashcards").firstChild;
+	current.setAttribute("class", "hidden");
+	next.setAttribute("class", "current");
+}
+
+function flashcardPrevHandler(e)
+{
+	const current = document.querySelector(".current");
+	let prev;
+	if(current.previousSibling != null)
+		prev = current.previousSibling;
+	else
+		prev = document.querySelector("#flashcards").lastChild;
+	current.setAttribute("class", "hidden");
+	prev.setAttribute("class", "current");
+}
+
+function flashcardDefHandler()
+{
+	const current = document.querySelector(".current");
+	const title = current.querySelector(".title");
+	const content = current.querySelector(".content");
+
+	title.classList.toggle("hidden");
+	content.classList.toggle("hidden");
+}
+
 export function renderContentPage(json, content_param)
 {
 
@@ -60,6 +94,16 @@ export function renderContentPage(json, content_param)
 	{
 		const keywords = renderKeywords(json);
 		main.appendChild(keywords);
+
+		const next_button = el("button", {}, "next");
+		const prev_button = el("button", {}, "prev");
+		const def_button = el("button", {}, "definition");
+		next_button.addEventListener("click", flashcardNextHandler);
+		prev_button.addEventListener("click", flashcardPrevHandler);
+		def_button.addEventListener("click", flashcardDefHandler);
+		main.appendChild(prev_button);
+		main.appendChild(next_button);
+		main.appendChild(def_button);
 	}
 	else if(content_param === "lectures")
 	{
