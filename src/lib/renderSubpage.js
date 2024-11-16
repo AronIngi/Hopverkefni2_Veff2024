@@ -59,6 +59,30 @@ export function renderLecture(json)
 	return lecture;
 }
 
+export function renderQuestions(json)
+{
+	const form = el("form", {});
+
+	for(const question of json.questions)
+	{
+		const set = el("fieldset", {});
+		const question_el = el("legend", {}, question.question);
+		set.appendChild(question_el);
+		for(const answer of question.answers)
+		{
+			const inline_el = el("div", {});
+			const label = el("label", {}, answer.answer);
+			const input = el("input", {type: "checkbox"});
+			inline_el.appendChild(label);
+			inline_el.appendChild(input);
+			set.appendChild(inline_el);
+		}
+		form.appendChild(set);
+	}
+	
+	return form;
+}
+
 export function renderLectures(json)
 {
 	const lectures = el("div", {});
@@ -83,18 +107,27 @@ export function renderLectures(json)
 
 export function renderKeywords(json)
 {
-	const div = el("div", {});
+	const div = el("div", {id: "flashcards"});
 
+	let current = null;
 	for(const item of json.keywords)
 	{
 		const section = el("section", {});
-		const title = el("h2", {}, item.title);
-		const content = el("p", {}, item.content);
+
+		if(current === null)
+		{
+			section.setAttribute("class", "current");
+			current = section;
+		}
+		else
+			section.setAttribute("class", "hidden");
+
+		const title = el("h2", {class: "title"}, item.title);
+		const content = el("p", {class: "content hidden"}, item.content);
 
 		section.appendChild(title);
 		section.appendChild(content);
 		div.appendChild(section);
 	}
-
 	return div;
 }
