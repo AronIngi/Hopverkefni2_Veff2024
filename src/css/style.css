@@ -1,0 +1,22 @@
+.hidden
+{
+	display:none;
+}
+
+nav ul
+{
+	padding: 0;
+	list-style: none;
+	display:flex;
+	gap: 1rem;
+}
+
+nav ul li
+{
+	display:inline;
+}
+
+img
+{
+	max-width: 500px;
+}
