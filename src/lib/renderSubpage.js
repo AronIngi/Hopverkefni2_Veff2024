@@ -20,7 +20,11 @@ export function renderLecture(json)
 	const main = el("main", {});
 
 	const title = el("h1", {}, json.title);
+	const back = el("a", {href: ""}, "back");
+	back.addEventListener("click", () => {history.back()});
+
 	heading.appendChild(title);
+	heading.appendChild(back);
 	for(const item of json.content)
 	{
 		switch(item.type)

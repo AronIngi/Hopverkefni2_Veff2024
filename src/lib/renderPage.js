@@ -86,8 +86,11 @@ export function renderContentPage(json, content_param)
 	const header = el("header", {});
 	const main = el("main", {});
 	const title = el("h1", {}, json.title);
+	const back = el("a", {href:""}, "back");
+	back.addEventListener("click", () => {history.back()});
 
 	header.appendChild(title);
+	header.appendChild(back);
 	parent_el.appendChild(header);
 
 	if(content_param === "keywords")
@@ -126,8 +129,12 @@ export function renderTypePage(json)
 	const header = el("header", {});
 	const title = el("h1", {}, json.title);
 	const text = el("p", {}, json.text);
+	const back = el("a", {href:""}, "back");
+
+	back.addEventListener("click", () => {history.back()});
 
 	header.appendChild(title);
+	header.appendChild(back);
 	header.appendChild(text);
 
 	const content = renderContent(json);
