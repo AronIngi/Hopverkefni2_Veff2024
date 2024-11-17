@@ -1,5 +1,5 @@
 # Tæki og tól
-vite: build framework
+vite: build framework\n
 sass: preprocessor fyrir css
 eslinter: lint tól fyrir javascript
 stylelinter: lint tól fyrir css
