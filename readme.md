@@ -13,7 +13,7 @@
 
 # Uppsetning:
 - Allar config skrárnar sem setja upp frameworkin eru í rót verkefnisins.
-- Allur kóði fyrir síðuna er í src möppuni fyrir utan index.html skrána en hún er aðeins notuð fyrir lýsigögn og grunn uppsetningu síðunnar (<html>, <head> og <body> elementin)
+- Allur kóði fyrir síðuna er í src möppuni fyrir utan index.html skrána en hún er aðeins notuð fyrir lýsigögn og grunn uppsetningu síðunnar (html, head og body elementin)
 - Öll gögn sem síðan notar er í public möppuni
 - main.js sem er notað til að búa til alla síðuna er í src möppuni
 - öll javascript föllin sem main.js notar eru skilgreind í öðrum skrám í src/lib skránni
