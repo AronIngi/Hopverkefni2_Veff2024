@@ -66,6 +66,7 @@ export function renderLecture(json)
 function submitHandler(e)
 {
 	e.preventDefault();
+	let correct_answers = [];
 	for(const checkbox of document.querySelectorAll("input[type='checkbox']"))
 	{
 		const checkbox_fieldset = checkbox.parentElement.parentElement
@@ -73,6 +74,7 @@ function submitHandler(e)
 		{
 			checkbox_fieldset.querySelector(".correct").classList.remove("hidden");
 			checkbox_fieldset.querySelector(".incorrect").classList.add("hidden");
+			correct_answers.push(checkbox_fieldset.querySelector("legend").textContent);
 		}
 		else if(checkbox.checked && checkbox.value === "false")
 		{
